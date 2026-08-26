@@ -32,15 +32,194 @@ function loadFixturesForWeek(){
 }
 document.addEventListener("change",e=>{if(e.target.id==="weekSelect")loadFixturesForWeek();});
 
-function saveAdminResult(){
-  const week=Number(document.getElementById("weekSelect").value);
-  const fixtureIndex=Number(document.getElementById("fixtureSelect").value);
-  const match=fixtures.filter(f=>f.week===week)[fixtureIndex];
-  const homeInput=document.getElementById("homeScore"), awayInput=document.getElementById("awayScore");
-  if(!match){alert("Please select a fixture.");return;}
-  if(homeInput.value===""||awayInput.value===""){alert("Please enter both scores.");return;}
-  let results=JSON.parse(localStorage.getItem("results"))||[];
-  if(results.some(r=>Number(r.week)===week&&r.home===match.home&&r.away===match.away)){alert("⚠️ This fixture already has a result!");return;}
+async function saveAdminResult() {
+
+  const week =
+    Number(document.getElementById("weekSelect").value);
+
+  const fixtureIndex =
+    Number(document.getElementById("fixtureSelect").value);
+
+  const matches =
+    fixtures.filter(fixture => fixture.week === week);
+
+  const match =
+    matches[fixtureIndex];
+
+  const homeInput =
+    document.getElementById("homeScore");
+
+  const awayInput =
+    document.getElementById("awayScore");
+
+
+  if (!match) {
+
+    alert("Please select a fixture.");
+
+    return;
+
+  }
+
+
+  if (
+    homeInput.value === "" ||
+    awayInput.value === ""
+  ) {
+
+    alert("Please enter both scores.");
+
+    return;
+
+  }
+
+
+  const homeScore =
+    Number(homeInput.value);
+
+  const awayScore =
+    Number(awayInput.value);
+
+
+  // ============================
+  // SUPABASE
+  // ============================
+
+  const SUPABASE_URL =
+    "https://wevedaffdzdvbkxydblw.supabase.co";
+
+  const SUPABASE_KEY
+    sb_publishable_NJ5-zUej-yNedbcp4dMPrQ_IYRH4p6tSa
+
+
+  // Load Supabase library if necessary
+
+  if (!window.supabase) {
+
+    try {
+
+      await new Promise((resolve, reject) => {
+
+        const script =
+          document.createElement("script");
+
+        script.src =
+          "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+
+        script.onload = resolve;
+
+        script.onerror = reject;
+
+        document.head.appendChild(script);
+
+      });
+
+    } catch (error) {
+
+      alert("❌ Could not load Supabase.");
+
+      console.error(error);
+
+      return;
+
+    }
+
+  }
+
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+  // ============================
+  // CHECK DUPLICATE
+  // ============================
+
+  const fixtureName =
+    `${match.home} v ${match.away}`;
+
+
+  const { data: existing, error: checkError } =
+    await supabaseClient
+      .from("results")
+      .select("id")
+      .eq("week", week)
+      .eq("fixture", fixtureName)
+      .limit(1);
+
+
+  if (checkError) {
+
+    console.error(checkError);
+
+    alert(
+      "❌ Could not check the online results."
+    );
+
+    return;
+
+  }
+
+
+  if (existing && existing.length > 0) {
+
+    alert(
+      "⚠️ This fixture already has a result!"
+    );
+
+    return;
+
+  }
+
+
+  // ============================
+  // SAVE RESULT ONLINE
+  // ============================
+
+  const { error } =
+    await supabaseClient
+      .from("results")
+      .insert({
+
+        week: week,
+
+        fixture: fixtureName,
+
+        home_score: homeScore,
+
+        away_score: awayScore
+
+      });
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "❌ Result could not be saved online."
+    );
+
+    return;
+
+  }
+
+
+  // Clear scores
+
+  homeInput.value = "";
+
+  awayInput.value = "";
+
+
+  alert(
+    "✅ Result saved online!"
+  );
+
+}
   results.push({week,home:match.home,away:match.away,homeScore:Number(homeInput.value),awayScore:Number(awayInput.value)});
   localStorage.setItem("results",JSON.stringify(results));
   homeInput.value=""; awayInput.value=""; loadDeleteResults();
