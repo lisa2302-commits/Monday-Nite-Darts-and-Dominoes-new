@@ -219,8 +219,8 @@ return;
   );
 
 }
-  results.push({week,home:match.home,away:match.away,homeScore:Number(homeInput.value),awayScore:Number(awayInput.value)});
-  localStorage.setItem("results",JSON.stringify(results));
+  data.push({week,home:match.home,away:match.away,homeScore:Number(homeInput.value),awayScore:Number(awayInput.value)});
+  localStorage.setItem("results",JSON.stringify(data));
   homeInput.value=""; awayInput.value=""; loadDeleteResults();
   alert("✅ Result saved!");
 
