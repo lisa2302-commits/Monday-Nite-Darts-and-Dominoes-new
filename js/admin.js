@@ -198,12 +198,11 @@ async function saveAdminResult() {
   if (error) {
 
     console.error(error);
-
-    alert(
-      "❌ Result could not be saved online."
-    );
-
-    return;
+alert(
+  "❌ Supabase error: " +
+  error.message
+);
+return;
 
   }
 
