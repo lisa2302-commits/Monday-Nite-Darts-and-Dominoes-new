@@ -156,7 +156,7 @@ async function saveAdminResult() {
     console.error(checkError);
 
     alert(
-      "❌ Could not check the online results."
+      "❌ Could not check the onlinedata."
     );
 
     return;
@@ -219,7 +219,8 @@ return;
   );
 
 }
-  data.push({week,home:match.home,away:match.away,homeScore:Number(homeInput.value),awayScore:Number(awayInput.value)});
+ localStorage.setItem("results", JSON.stringify(data));
+ data.push({week,home:match.home,away:match.away,homeScore:Number(homeInput.value),awayScore:Number(awayInput.value)});
   localStorage.setItem("results",JSON.stringify(data));
   homeInput.value=""; awayInput.value=""; loadDeleteResults();
   alert("✅ Result saved!");
@@ -227,15 +228,15 @@ return;
 
 function loadDeleteResults(){
   const select=document.getElementById("deleteResultSelect"); if(!select)return;
-  const results=JSON.parse(localStorage.getItem("results"))||[]; select.innerHTML="";
-  if(!results.length){select.innerHTML='<option value="">No results yet</option>';return;}
-  results.forEach((r,i)=>select.innerHTML+=`<option value="${i}">Week ${r.week}: ${r.home} ${r.homeScore}-${r.awayScore} ${r.away}</option>`);
+  constdata=JSON.parse(localStorage.getItem("results"))||[]; select.innerHTML="";
+  if(!results.length){select.innerHTML='<option value="">Nodata yet</option>';return;}
+ data.forEach((r,i)=>select.innerHTML+=`<option value="${i}">Week ${r.week}: ${r.home} ${r.homeScore}-${r.awayScore} ${r.away}</option>`);
 }
 function deleteAdminResult(){
   const select=document.getElementById("deleteResultSelect"); if(!select||select.value===""){alert("No result selected.");return;}
-  let results=JSON.parse(localStorage.getItem("results"))||[]; const i=Number(select.value); if(!results[i])return;
+  letdata=JSON.parse(localStorage.getItem("results"))||[]; const i=Number(select.value); if(!results[i])return;
   const r=results[i]; if(!confirm(`Delete Week ${r.week}: ${r.home} ${r.homeScore}-${r.awayScore} ${r.away}?`))return;
-  results.splice(i,1); localStorage.setItem("results",JSON.stringify(results)); loadDeleteResults(); alert("🗑️ Result deleted.");
+ data.splice(i,1); localStorage.setItem("results",JSON.stringify(results)); loadDeleteResults(); alert("🗑️ Result deleted.");
 }
 
 function loadPlayerTeam(){const s=document.getElementById("playerTeam");if(!s)return;s.innerHTML="";teams.forEach(t=>s.innerHTML+=`<option value="${t}">${t}</option>`);}
