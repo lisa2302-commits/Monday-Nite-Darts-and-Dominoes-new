@@ -223,7 +223,7 @@ return;
   localStorage.setItem("results",JSON.stringify(results));
   homeInput.value=""; awayInput.value=""; loadDeleteResults();
   alert("✅ Result saved!");
-}
+
 
 function loadDeleteResults(){
   const select=document.getElementById("deleteResultSelect"); if(!select)return;
