@@ -13,99 +13,178 @@ const teams = [
   "Victoria B"
 ];
 
-function loadLeagueTable() {
 
-  const table = document.getElementById("leagueTable");
+const SUPABASE_URL =
+  "https://wevedaffdzdvbkxydblw.supabase.co";
+
+const SUPABASE_KEY =
+  "YOUR_PUBLISHABLE_KEY_HERE";
+
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+async function loadLeagueTable() {
+
+  const table =
+    document.getElementById("leagueTable");
 
   if (!table) return;
 
-  const results =
-    JSON.parse(localStorage.getItem("results")) || [];
+
+  table.innerHTML = `
+    <tr>
+      <td colspan="4">
+        Loading table...
+      </td>
+    </tr>
+  `;
+
+
+  const { data: results, error } =
+    await supabaseClient
+      .from("results")
+      .select("*")
+      .order("week", { ascending: true });
+
+
+  if (error) {
+
+    console.error(error);
+
+    table.innerHTML = `
+      <tr>
+        <td colspan="4">
+          ❌ Unable to load league table.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
 
   const data = {};
+
 
   teams.forEach(team => {
 
     data[team] = {
+
       played: 0,
-      wins: 0,
-      draws: 0,
-      losses: 0,
+
       points: 0
+
     };
 
   });
 
+
   results.forEach(result => {
 
-    if (!data[result.home] || !data[result.away]) return;
+    if (!result.fixture) return;
 
-    const homeScore = Number(result.homeScore) || 0;
-    const awayScore = Number(result.awayScore) || 0;
 
-    data[result.home].played++;
-    data[result.away].played++;
+    const parts =
+      result.fixture.split(" v ");
+
+
+    if (parts.length !== 2) return;
+
+
+    const home =
+      parts[0];
+
+    const away =
+      parts[1];
+
+
+    if (!data[home] || !data[away]) return;
+
+
+    const homeScore =
+      Number(result.home_score) || 0;
+
+    const awayScore =
+      Number(result.away_score) || 0;
+
+
+    data[home].played++;
+
+    data[away].played++;
+
 
     // 1 point for every game won
-    data[result.home].points += homeScore;
-    data[result.away].points += awayScore;
 
-    // Match result
-    if (homeScore > awayScore) {
+    data[home].points += homeScore;
 
-      data[result.home].wins++;
-      data[result.away].losses++;
-
-    } else if (awayScore > homeScore) {
-
-      data[result.away].wins++;
-      data[result.home].losses++;
-
-    } else {
-
-      data[result.home].draws++;
-      data[result.away].draws++;
-
-    }
+    data[away].points += awayScore;
 
   });
+
 
   const sortedTeams =
     Object.entries(data).sort((a, b) => {
 
-      // 1. Points
-      if (b[1].points !== a[1].points) {
-        return b[1].points - a[1].points;
+      if (
+        b[1].points !==
+        a[1].points
+      ) {
+
+        return (
+          b[1].points -
+          a[1].points
+        );
+
       }
 
-      // 2. Match wins
-      if (b[1].wins !== a[1].wins) {
-        return b[1].wins - a[1].wins;
-      }
 
-      // 3. Team name
-      return a[0].localeCompare(b[0]);
+      return (
+        a[0].localeCompare(b[0])
+      );
 
     });
 
+
   table.innerHTML = "";
 
-  sortedTeams.forEach((team, index) => {
 
-    table.innerHTML += `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${team[0]}</td>
-        <td>${team[1].played}</td>
-        <td>${team[1].wins}</td>
-        <td>${team[1].draws}</td>
-        <td>${team[1].losses}</td>
-        <td>${team[1].points}</td>
-      </tr>
-    `;
+  sortedTeams.forEach(
+    (team, index) => {
 
-  });
+      table.innerHTML += `
+
+        <tr>
+
+          <td>
+            ${index + 1}
+          </td>
+
+          <td>
+            ${team[0]}
+          </td>
+
+          <td>
+            ${team[1].played}
+          </td>
+
+          <td>
+            ${team[1].points}
+          </td>
+
+        </tr>
+
+      `;
+
+    }
+  );
 
 }
+
 
 loadLeagueTable();
