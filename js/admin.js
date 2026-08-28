@@ -89,7 +89,7 @@ async function saveAdminResult() {
     "https://wevedaffdzdvbkxydblw.supabase.co";
 
   const SUPABASE_KEY =
-    "sb_publishable_NJ5-zUej-yNedbcp4dMPrQ_IYRH4p6tSa";
+  "sb_publishable_NJ5-zUej-yNedbcp4dMPrQ_IYRH4p6t";
 
 
   // Load Supabase library if necessary
