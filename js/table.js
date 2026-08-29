@@ -54,9 +54,21 @@ async function loadLeagueTable() {
 
   if (error) {
 
-    console.error(error);
+  console.error(error);
 
-    table.innerHTML = `
+  table.innerHTML = `
+    <tr>
+      <td colspan="4">
+        ❌ ${error.message}
+      </td>
+    </tr>
+  `;
+
+  return;
+
+}
+
+console.log("SUPABASE RESULTS:", results);
       <tr>
         <td colspan="4">
           ❌ Unable to load league table.
