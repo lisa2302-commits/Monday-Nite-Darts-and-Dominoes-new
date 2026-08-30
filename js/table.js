@@ -35,8 +35,7 @@ async function loadLeagueTable() {
   try {
 
     const response = await fetch(
-      SUPABASE_URL +
-      "/rest/v1/results?select=*&order=week.asc",
+      SUPABASE_URL + "/rest/v1/results?select=*",
       {
         headers: {
           "apikey": SUPABASE_KEY
@@ -46,7 +45,7 @@ async function loadLeagueTable() {
 
     if (!response.ok) {
       throw new Error(
-        "Supabase returned " + response.status
+        "Supabase error: " + response.status
       );
     }
 
@@ -67,7 +66,8 @@ async function loadLeagueTable() {
 
       if (!result.fixture) return;
 
-      const parts = result.fixture.split(" v ");
+      const parts =
+        result.fixture.split(" v ");
 
       if (parts.length !== 2) return;
 
@@ -76,14 +76,18 @@ async function loadLeagueTable() {
 
       if (!data[home] || !data[away]) return;
 
-      const homeScore = Number(result.home_score) || 0;
-      const awayScore = Number(result.away_score) || 0;
+      const homeScore =
+        Number(result.home_score);
+
+      const awayScore =
+        Number(result.away_score);
 
       data[home].played++;
       data[away].played++;
 
       data[home].points += homeScore;
       data[away].points += awayScore;
+
     });
 
     const sortedTeams =
@@ -94,6 +98,7 @@ async function loadLeagueTable() {
         }
 
         return a[0].localeCompare(b[0]);
+
       });
 
     table.innerHTML = "";
@@ -118,11 +123,13 @@ async function loadLeagueTable() {
     table.innerHTML = `
       <tr>
         <td colspan="4">
-          ❌ Unable to load league table.
+          ❌ Unable to load league table
         </td>
       </tr>
     `;
+
   }
+
 }
 
 loadLeagueTable();
