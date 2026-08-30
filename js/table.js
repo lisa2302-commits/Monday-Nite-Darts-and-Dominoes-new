@@ -39,8 +39,7 @@ async function loadLeagueTable() {
       "/rest/v1/results?select=*&order=week.asc",
       {
         headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": "Bearer " + SUPABASE_KEY
+          "apikey": SUPABASE_KEY
         }
       }
     );
