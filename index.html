@@ -1,84 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Monday Nite League</title>
-<link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <title>Monday Nite League</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<link rel="icon" type="image/png" href="favicon.png">
 
 <body>
 
-<header>
-<h1>🎯 Monday Nite</h1>
-<p>Darts & Dominoes League 🎲</p>
-</header>
+  <h1>🎯 Monday Nite Darts & Dominoes League 🎲</h1>
 
-<nav>
-<a href="index.html">🏆 League</a>
-<a href="fixtures.html">📅 Fixtures</a>
-<a href="results.html">📝 Results</a>
-<a href="stats.html">🎯 Player Stats</a>
-<a href="halloffame.html">🏅 Hall of Fame</a>
-</nav>
-<a href="admin.html">🔐 Admin</a>
-<div class="card">
+  <!-- RESULTS SECTION -->
+  <div id="results"></div>
 
-<h2>🏆 League Table</h2>
+  <!-- LEAGUE TABLE -->
+  <table class="league-table">
+    <thead>
+      <tr>
+        <th>Pos</th>
+        <th>Team</th>
+        <th>P</th>
+        <th>Pts</th>
+        <th>W</th>
+        <th>D</th>
+        <th>L</th>
+      </tr>
+    </thead>
+    <tbody id="league-table"></tbody>
+  </table>
 
-<table>
-<thead>
-<tr>
-<th>Pos</th>
-<th>Team</th>
-<th>P</th>
-<th>W</th>
-<th>D</th>
-<th>L</th>
-<th>Pts</th>
-</tr>
-</thead>
+  <!-- Supabase v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<tbody id="leagueTable"><tr><td>1</td><td>Crown A</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>2</td><td>Punch</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>3</td><td>ICI</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>4</td><td>Golden Cup</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>5</td><td>The Park Inn</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>6</td><td>Bird in Hand</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>7</td><td>Victoria A</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>8</td><td>Two Gates Club</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>9</td><td>Funky Room</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>10</td><td>Entwistle</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>11</td><td>Crown B</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>12</td><td>Victoria B</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr></tbody>
+  <!-- Supabase initialization -->
+  <script>
+    const supabaseUrl = "https://wevedaffdzdvbkxydblw.supabase.co";
+    const supabaseKey = "YOUR_PUBLIC_ANON_KEY";
+    const db = supabase.createClient(supabaseUrl, supabaseKey);
+  </script>
 
-</table>
+  <!-- Results list -->
+  <script src="js/fixtures.js?v=3"></script>
 
-</div>
-
-<script src="js/app.js"></script>
-<div id="results"></div>
-
-<table class="league-table">
-  <thead>
-    <tr>
-      <th>Pos</th>
-      <th>Team</th>
-      <th>P</th>
-      <th>Pts</th>
-      <th>W</th>
-      <th>D</th>
-      <th>L</th>
-    </tr>
-  </thead>
-  <tbody id="league-table"></tbody>
-</table>
-
-<!-- Supabase v2 -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Supabase initialization -->
-<script>
-  const supabaseUrl = "https://wevedaffdzdvbkxydblw.supabase.co";
-  const supabaseKey = "YOUR_PUBLIC_ANON_KEY";
-  const db = supabase.createClient(supabaseUrl, supabaseKey);
-</script>
-
-<!-- Results list -->
-<script src="js/fixtures.js?v=3"></script>
-
-<!-- League table -->
-<script src="js/table.js?v=3"></script>
+  <!-- League table -->
+  <script src="js/table.js?v=3"></script>
 
 </body>
 </html>
