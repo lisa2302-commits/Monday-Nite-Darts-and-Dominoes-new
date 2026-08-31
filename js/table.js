@@ -1,3 +1,8 @@
+// -------------------------------
+// Monday Nite League - League Table
+// -------------------------------
+
+// All teams
 const teams = [
   "Crown A",
   "Punch",
@@ -13,126 +18,88 @@ const teams = [
   "Victoria B"
 ];
 
-<script>
-  const supabaseUrl = "https://wevedaffdzdvbkxydblw.supabase.co";
-  const supabaseKey = "sb_publishable_NJ5-zUej-yNedbcp4dMPrQ_IYRH4p6t";
-  const db = supabase.createClient(supabaseUrl, supabaseKey);
-</script>
+// Build initial league object
+let league = {};
+teams.forEach(team => {
+  league[team] = {
+    team: team,
+    points: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0
+  };
+});
 
-
-
+// Load results from Supabase
 async function loadLeagueTable() {
+  const { data, error } = await db
+    .from("results")
+    .select("*");
 
-  const table = document.getElementById("leagueTable");
-
-  if (!table) return;
-
-  table.innerHTML = `
-    <tr>
-      <td colspan="4">Loading table...</td>
-    </tr>
-  `;
-
-  try {
-
-    const response = await fetch(
-      SUPABASE_URL + "/rest/v1/results?select=*",
-      {
-        headers: {
-          "apikey": SUPABASE_KEY
-        }
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        "Supabase error: " + response.status
-      );
-    }
-
-    const results = await response.json();
-
-    console.log("ONLINE RESULTS:", results);
-
-    const data = {};
-
-    teams.forEach(team => {
-      data[team] = {
-        played: 0,
-        points: 0
-      };
-    });
-
-    results.forEach(result => {
-
-      if (!result.fixture) return;
-
-      const parts =
-        result.fixture.split(" v ");
-
-      if (parts.length !== 2) return;
-
-      const home = parts[0].trim();
-      const away = parts[1].trim();
-
-      if (!data[home] || !data[away]) return;
-
-      const homeScore =
-        Number(result.home_score);
-
-      const awayScore =
-        Number(result.away_score);
-
-      data[home].played++;
-      data[away].played++;
-
-      data[home].points += homeScore;
-      data[away].points += awayScore;
-
-    });
-
-    const sortedTeams =
-      Object.entries(data).sort((a, b) => {
-
-        if (b[1].points !== a[1].points) {
-          return b[1].points - a[1].points;
-        }
-
-        return a[0].localeCompare(b[0]);
-
-      });
-
-    table.innerHTML = "";
-
-    sortedTeams.forEach((team, index) => {
-
-      table.innerHTML += `
-        <tr>
-        <td>${t.wins + t.draws + t.losses}</td>
-<td>${t.points}</td>
-<td>${t.wins}</td>
-<td>${t.draws}</td>
-<td>${t.losses}</td>
-
-        </tr>
-      `;
-
-    });
-
-  } catch (error) {
-
-    console.error("League table error:", error);
-
-    table.innerHTML = `
-      <tr>
-        <td colspan="4">
-          ❌ Unable to load league table
-        </td>
-      </tr>
-    `;
-
+  if (error) {
+    console.error("Unable to load league table", error);
+    document.getElementById("league-table").innerHTML =
+      "<tr><td colspan='7'>Unable to load league table</td></tr>";
+    return;
   }
 
+  data.forEach(row => {
+    const fixture = row.fixture;
+    const homeScore = row.home_score;
+    const awayScore = row.away_score;
+
+    // Split fixture: "Crown A v Punch"
+    const [homeTeam, awayTeam] = fixture.split(" v ");
+
+    // Add points
+    league[homeTeam].points += homeScore;
+    league[awayTeam].points += awayScore;
+
+    // Wins / Draws / Losses
+    if (homeScore > awayScore) {
+      league[homeTeam].wins++;
+      league[awayTeam].losses++;
+    } else if (awayScore > homeScore) {
+      league[awayTeam].wins++;
+      league[homeTeam].losses++;
+    } else {
+      league[homeTeam].draws++;
+      league[awayTeam].draws++;
+    }
+  });
+
+  // Convert to array for sorting
+  let leagueArray = Object.values(league);
+
+  // Sort: Points → Wins → Alphabetical
+  leagueArray.sort((a, b) => {
+    if (b.points !== a.points) return b.points - a.points;
+    if (b.wins !== a.wins) return b.wins - a.wins;
+    return a.team.localeCompare(b.team);
+  });
+
+  // Build HTML table rows
+  let html = "";
+
+  leagueArray.forEach((t, index) => {
+    const played = t.wins + t.draws + t.losses;
+
+    html += `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${t.team}</td>
+        <td>${played}</td>
+        <td>${t.points}</td>
+        <td>${t.wins}</td>
+        <td>${t.draws}</td>
+        <td>${t.losses}</td>
+      </tr>
+    `;
+  });
+
+  // Insert into page
+  document.getElementById("league-table").innerHTML = html;
 }
 
+// Run table
 loadLeagueTable();
