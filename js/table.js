@@ -48,8 +48,16 @@ async function loadLeagueTable() {
     const homeScore = row.home_score;
     const awayScore = row.away_score;
 
-    // Split fixture: "Crown A v Punch"
-    const [homeTeam, awayTeam] = fixture.split(" v ");
+    // NEW FIX: Parse "Team A 7 - 7 Team B"
+    const match = fixture.match(/(.+?)\s(\d+)\s-\s(\d+)\s(.+)/);
+
+    if (!match) {
+      console.error("Fixture format incorrect:", fixture);
+      return;
+    }
+
+    const homeTeam = match[1].trim();
+    const awayTeam = match[4].trim();
 
     // Add points
     league[homeTeam].points += homeScore;
