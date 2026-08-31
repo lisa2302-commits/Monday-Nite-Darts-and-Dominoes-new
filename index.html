@@ -13,7 +13,44 @@
   <!-- RESULTS SECTION -->
   <div id="results"></div>
 
-  <!-- LEAGUE TABLE -->
+  <!-- LEAGUE TABLE (DYNAMIC) -->
+  <table class="league-table">
+    <thead>
+      <tr>
+        <th>Pos</th>
+        <th>Team</th>
+        <th>P</th>
+        <th>Pts</th>
+        <th>W</th>
+        <th>D</th>
+        <th>L</th>
+      </tr>
+    </thead>
+    <tbody id="league-table"></tbody>
+  </table>
+
+  <!-- Supabase v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Supabase initialization -->
+  <script>
+    const supabaseUrl = "https://wevedaffdzdvbkxydblw.supabase.co";
+    const supabaseKey = "<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Monday Nite Darts & Dominoes League</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <h1>🎯 Monday Nite Darts & Dominoes League 🎲</h1>
+
+  <!-- RESULTS SECTION -->
+  <div id="results"></div>
+
+  <!-- LEAGUE TABLE (DYNAMIC) -->
   <table class="league-table">
     <thead>
       <tr>
@@ -36,6 +73,18 @@
   <script>
     const supabaseUrl = "https://wevedaffdzdvbkxydblw.supabase.co";
     const supabaseKey = "sb_publishable_NJ5-zUej-yNedbcp4dMPrQ_IYRH4p6t";
+    const db = supabase.createClient(supabaseUrl, supabaseKey);
+  </script>
+
+  <!-- Results list -->
+  <script src="js/fixtures.js?v=3"></script>
+
+  <!-- League table -->
+  <script src="js/table.js?v=3"></script>
+
+</body>
+</html>
+";
     const db = supabase.createClient(supabaseUrl, supabaseKey);
   </script>
 
