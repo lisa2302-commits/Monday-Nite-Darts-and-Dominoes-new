@@ -1,8 +1,3 @@
-// -------------------------------
-// Monday Nite League - League Table
-// -------------------------------
-
-// All teams
 const teams = [
   "Crown A",
   "Punch",
@@ -18,96 +13,99 @@ const teams = [
   "Victoria B"
 ];
 
-// Build initial league object
-let league = {};
-teams.forEach(team => {
-  league[team] = {
-    team: team,
-    points: 0,
-    wins: 0,
-    draws: 0,
-    losses: 0
-  };
-});
+function loadLeagueTable() {
 
-// Load results from Supabase
-async function loadLeagueTable() {
-  const { data, error } = await db
-    .from("results")
-    .select("*");
+  const table = document.getElementById("leagueTable");
 
-  if (error) {
-    console.error("Unable to load league table", error);
-    document.getElementById("league-table").innerHTML =
-      "<tr><td colspan='7'>Unable to load league table</td></tr>";
-    return;
-  }
+  if (!table) return;
 
-  data.forEach(row => {
-    const fixture = row.fixture;
-    const homeScore = row.home_score;
-    const awayScore = row.away_score;
+  const results =
+    JSON.parse(localStorage.getItem("results")) || [];
 
-    // NEW FIX: Parse "Team A 7 - 7 Team B"
-    const match = fixture.match(/(.+?)\s(\d+)\s-\s(\d+)\s(.+)/);
+  const data = {};
 
-    if (!match) {
-      console.error("Fixture format incorrect:", fixture);
-      return;
-    }
+  teams.forEach(team => {
 
-    const homeTeam = match[1].trim();
-    const awayTeam = match[4].trim();
+    data[team] = {
+      played: 0,
+      wins: 0,
+      draws: 0,
+      losses: 0,
+      points: 0
+    };
 
-    // Add points
-    league[homeTeam].points += homeScore;
-    league[awayTeam].points += awayScore;
+  });
 
-    // Wins / Draws / Losses
+  results.forEach(result => {
+
+    if (!data[result.home] || !data[result.away]) return;
+
+    const homeScore = Number(result.homeScore) || 0;
+    const awayScore = Number(result.awayScore) || 0;
+
+    data[result.home].played++;
+    data[result.away].played++;
+
+    // 1 point for every game won
+    data[result.home].points += homeScore;
+    data[result.away].points += awayScore;
+
+    // Match result
     if (homeScore > awayScore) {
-      league[homeTeam].wins++;
-      league[awayTeam].losses++;
+
+      data[result.home].wins++;
+      data[result.away].losses++;
+
     } else if (awayScore > homeScore) {
-      league[awayTeam].wins++;
-      league[homeTeam].losses++;
+
+      data[result.away].wins++;
+      data[result.home].losses++;
+
     } else {
-      league[homeTeam].draws++;
-      league[awayTeam].draws++;
+
+      data[result.home].draws++;
+      data[result.away].draws++;
+
     }
+
   });
 
-  // Convert to array for sorting
-  let leagueArray = Object.values(league);
+  const sortedTeams =
+    Object.entries(data).sort((a, b) => {
 
-  // Sort: Points → Wins → Alphabetical
-  leagueArray.sort((a, b) => {
-    if (b.points !== a.points) return b.points - a.points;
-    if (b.wins !== a.wins) return b.wins - a.wins;
-    return a.team.localeCompare(b.team);
-  });
+      // 1. Points
+      if (b[1].points !== a[1].points) {
+        return b[1].points - a[1].points;
+      }
 
-  // Build HTML table rows
-  let html = "";
+      // 2. Match wins
+      if (b[1].wins !== a[1].wins) {
+        return b[1].wins - a[1].wins;
+      }
 
-  leagueArray.forEach((t, index) => {
-    const played = t.wins + t.draws + t.losses;
+      // 3. Team name
+      return a[0].localeCompare(b[0]);
 
-    html += `
+    });
+
+  table.innerHTML = "";
+
+  sortedTeams.forEach((team, index) => {
+
+    table.innerHTML += `
       <tr>
         <td>${index + 1}</td>
-        <td>${t.team}</td>
-        <td>${played}</td>
-        <td>${t.points}</td>
-        <td>${t.wins}</td>
-        <td>${t.draws}</td>
-        <td>${t.losses}</td>
+        <td>${team[0]}</td>
+        <td>${team[1].played}</td>
+        <td>${team[1].wins}</td>
+        <td>${team[1].draws}</td>
+        <td>${team[1].losses}</td>
+        <td>${team[1].points}</td>
       </tr>
     `;
+
   });
 
-  // Insert into page
-  document.getElementById("league-table").innerHTML = html;
 }
 
-// Run table
 loadLeagueTable();
