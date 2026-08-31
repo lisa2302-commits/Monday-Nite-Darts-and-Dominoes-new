@@ -13,11 +13,12 @@ const teams = [
   "Victoria B"
 ];
 
-const SUPABASE_URL =
-  "https://wevedaffdzdvbkxydblw.supabase.co";
+<script>
+  const supabaseUrl = "https://wevedaffdzdvbkxydblw.supabase.co";
+  const supabaseKey = "sb_publishable_NJ5-zUej-yNedbcp4dMPrQ_IYRH4p6t";
+  const db = supabase.createClient(supabaseUrl, supabaseKey);
+</script>
 
-const SUPABASE_KEY =
-  "sb_publishable_NJ5-zUej-yNedbcp4dMPrQ_IYRH4p6t";
 
 
 async function loadLeagueTable() {
