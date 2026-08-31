@@ -107,10 +107,12 @@ async function loadLeagueTable() {
 
       table.innerHTML += `
         <tr>
-          <td>${index + 1}</td>
-          <td>${team[0]}</td>
-          <td>${team[1].played}</td>
-          <td>${team[1].points}</td>
+        <td>${t.wins + t.draws + t.losses}</td>
+<td>${t.points}</td>
+<td>${t.wins}</td>
+<td>${t.draws}</td>
+<td>${t.losses}</td>
+
         </tr>
       `;
 
