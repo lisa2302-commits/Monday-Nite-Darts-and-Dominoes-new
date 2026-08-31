@@ -1,46 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Monday Nite League</title>
-  <link rel="stylesheet" href="style.css">
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>League Table - Monday Nite League</title>
+
+<link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body>
 
-  <h1>🎯 Monday Nite League 🎲</h1>
-<div id="results"></div>
-  <table class="league-table">
-    <thead>
-      <tr>
-        <th>Pos</th>
-        <th>Team</th>
-        <th>P</th>
-        <th>Pts</th>
-        <th>W</th>
-        <th>D</th>
-        <th>L</th>
-      </tr>
-    </thead>
-    <tbody id="league-table"></tbody>
-  </table>
+<header>
 
-<!-- Supabase v2 -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<h1>🎯 Monday Nite League 🎲</h1>
 
-<!-- Supabase initialization -->
-<script>
-  const supabaseUrl = "https://wevedaffdzdvbkxydblw.supabase.co";
-  const supabaseKey = "sb_publishable_NJ5-zUej-yNedbcp4dMPrQ_IYRH4p6t";
-  const db = supabase.createClient(supabaseUrl, supabaseKey);
-</script>
+</header>
 
-<!-- Results list -->
-<script src="js/fixtures.js?v=3"></script>
 
-<!-- League table -->
-<script src="js/table.js?v=3"></script>
-  
+<div class="card">
+
+<h2>🏆 League Table</h2>
+
+<table>
+
+<thead>
+
+<tr>
+<th>Pos</th>
+<th>Team</th>
+<th>P</th>
+<th>Pts</th>
+</tr>
+
+</thead>
+
+<tbody id="leagueTable">
+
+</tbody>
+
+</table>
+
+</div>
+<script src="js/Table.js"></script>
 
 </body>
+
 </html>
